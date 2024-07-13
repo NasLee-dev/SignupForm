@@ -1,4 +1,23 @@
 {
-  "name": "form",
-  "packageManager": "yarn@4.0.2"
+  "name": "signup",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "parcel index.html",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "browserslist": [
+    "last 1 Chrome version"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "eslint": "^9.7.0",
+    "express": "^4.17.1",
+    "prettier": "^3.3.2"
+  },
+  "devDependencies": {
+    "typescript": "^4.3.3"
+  }
 }
