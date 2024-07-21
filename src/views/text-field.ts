@@ -1,4 +1,4 @@
-import { RequireRule } from "../contant"
+import { RequireRule } from "../constant"
 import { ValidateRule } from "../types"
 import { nextTick } from "../utils"
 import template from "./text-field.template"

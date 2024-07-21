@@ -1,17 +1,25 @@
-import template from "./app.template";
-import { CantContainWhitespace, CantStartNumber, MinimumLengthLimit } from "./contant";
-import { AnyObject } from "./types";
-import { AddressField, PasswordField, TextField } from "./views";
+import template from "./signup.template";
+import { CantContainWhitespace, CantStartNumber, MinimumLengthLimit } from "../constant";
+import { AnyObject } from "../types";
+import { AddressField, PasswordField, TextField } from "../views";
 
-export default class App {
+export default class Signup {
   template = template
   data: AnyObject;
-  container: HTMLElement;
+  container: HTMLElement | string;
   fields: AnyObject[];
   active: boolean = false;
 
-  constructor(container: string, data: any = {}) {
-    this.container = document.querySelector(container) as HTMLElement;
+  constructor(container: HTMLElement | string, data: any = {}) {
+    if (typeof container === 'string') {
+      const selectedContainer = document.querySelector(container);
+      if (!selectedContainer) {
+        throw new Error('Container element not found');
+      }
+      this.container = selectedContainer as HTMLElement;
+    } else {
+      this.container = container;
+    }
     this.data = data;
     this.fields = [];
     this.initialize();
@@ -56,14 +64,21 @@ export default class App {
   }
 
   private validFieldMonitor = () => {
-    const btnJoin = this.container.querySelector('#btn-join') as HTMLButtonElement
+    let btnJoin: HTMLElement | null = null
+    if (typeof this.container === 'string') {
+      btnJoin = document.querySelector('#btn-join');
+    } else {
+      btnJoin = this.container.querySelector('#btn-join');
+    }
 
     if (this.fields.filter(field => field.isValid).length === this.fields.length) {
       this.active = true
+      if (!btnJoin) return
       btnJoin.classList.remove('bg-gray-300')
       btnJoin.classList.add('bg-green=500')
     } else {
       this.active = false
+      if (!btnJoin) return
       btnJoin.classList.remove('bg-green-500')
       btnJoin.classList.add('bg-gray-300')
     }
@@ -79,6 +94,13 @@ export default class App {
   }
 
   public render = () => {
+    if (typeof this.container === 'string') {
+      const selectedContainer = document.querySelector(this.container);
+      if (!selectedContainer) {
+        throw new Error('Container element not found');
+      }
+      this.container = selectedContainer as HTMLElement;
+    }
     this.container.innerHTML = this.template(this.data)
     this.fields.forEach(field => {
       field.render(true)

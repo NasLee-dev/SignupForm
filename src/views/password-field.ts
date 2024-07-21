@@ -1,4 +1,4 @@
-import { RequireRule } from '../contant';
+import { RequireRule } from '../constant';
 import { nextTick } from '../utils';
 import { ValidateRule } from './../types/common';
 import template from './password-field.template'
