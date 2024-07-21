@@ -2,11 +2,12 @@
   "compilerOptions": {
     "strict": true,
     "module": "CommonJS",
-    "target": "ES5",
+    "target": "ES6",
     "sourceMap": true,
     "lib": [
       "es6",
       "dom"
     ]
-  } 
+  },
+  "include": ["src/**/*"]
 }
