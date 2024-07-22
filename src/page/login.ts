@@ -1,14 +1,13 @@
-import { CoreProps } from '../types/core';
 import TextField from '../views/login.text-field';
 import template from './login.template';
 import axios from 'axios';
 
 export default class Login {
-  #template = template;
-  #data;
-  #container: HTMLElement;
-  #loginFail = false;
-  #fields: TextField[] = [];
+  private template = template;
+  private data;
+  private container: HTMLElement;
+  private loginFail = false;
+  private fields: TextField[] = [];
 
   constructor(container: HTMLElement | string, data: any) {
     if (typeof container === 'string') {
@@ -16,11 +15,11 @@ export default class Login {
       if (!selectedContainer) {
         throw new Error('Container element not found');
       }
-      this.#container = selectedContainer as HTMLElement;
+      this.container = selectedContainer as HTMLElement;
     } else {
-      this.#container = container;
+      this.container = container;
     }
-    this.#data = data;
+    this.data = data;
 
     this.#initialize();
   }
@@ -40,12 +39,12 @@ export default class Login {
       placeholder: '비밀번호를 입력해주세요',
       require: true,
     });
-    this.#fields.push(idField);
-    this.#fields.push(passwordField);
+    this.fields.push(idField);
+    this.fields.push(passwordField);
   }
   #onSubmit = (e: Event) => {
     e.preventDefault();
-    const loginData = this.#fields.map((field) => ({ [field.name]: field.value })).reduce((a, b) => ({ ...a, ...b }), {});
+    const loginData = this.fields.map((field) => ({ [field.name]: field.value })).reduce((a, b) => ({ ...a, ...b }), {});
     axios.post('/api/authentication', loginData).then(result => {
       return result.data.result;
     })
@@ -53,7 +52,7 @@ export default class Login {
       const options = {
         headers: token
       };
-      this.#data.store.token = token;
+      this.data.store.token = token;
 
       return axios.all([
         axios.get(`/api/user/${id}`, options),
@@ -61,22 +60,22 @@ export default class Login {
       ])
     })
     .then(([profile, posts]) => {
-      this.#data.store.userProfile = profile.data.result;
-      this.#data.store.posts = posts.data.result;
+      this.data.store.userProfile = profile.data.result;
+      this.data.store.posts = posts.data.result;
 
       location.href = '/#/profile';
     })
     .catch((error: Error)=> {
-      this.#loginFail = true;
+      this.loginFail = true;
       this.render();
     })
   }
   render = () => {
-    this.#container.innerHTML = this.#template({ ...this.#data, loginFail: this.#loginFail });
-    this.#fields.forEach(field => {
+    this.container.innerHTML = this.template({ ...this.data, loginFail: this.loginFail });
+    this.fields.forEach(field => {
       field.render(true);
     });
 
-    this.#container.addEventListener('submit', this.#onSubmit);
+    this.container.addEventListener('submit', this.#onSubmit);
   }
 }

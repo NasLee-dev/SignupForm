@@ -5,7 +5,7 @@ import CoreField from "./core";
 import template from "./login.text-field.template";
 
 export default class TextField extends CoreField {
-  #updated = false;
+  private updated = false;
 
   constructor(container: HTMLElement | string, data: CoreProps) {
     super(template, container, data);
@@ -16,40 +16,40 @@ export default class TextField extends CoreField {
     nextTick(this.#attachEventHandler);
   }
 
-  #buildData = () => {
+  public buildData = () => {
     const isInvalid = this.validate();
 
-    if (this.#updated) {
+    if (this.updated) {
       return {
         ...this.data,
-        updated: this.#updated,
+        updated: this.updated,
         valid: !isInvalid,
         validateMessage: !!isInvalid ? isInvalid.message : '',
       }
     } else {
       return {
         ...this.data,
-        updated: this.#updated,
+        updated: this.updated,
         valid: true,
         validateMessage: '',
       }
     }
   }
 
-  #onChange = (e: Event) => {
+  private onChange = (e: Event) => {
     const { value, id } = e.target as HTMLInputElement;
 
     if (id === this.data.id) {
-      this.#updated = true;
+      this.updated = true;
       this.data.text = value;
     }
   }
 
   #attachEventHandler = () => {
     if (typeof this.container === 'string') {
-      document.querySelector(this.container)?.addEventListener('change', this.#onChange);
+      document.querySelector(this.container)?.addEventListener('change', this.onChange);
     } else {
-      this.container.addEventListener('change', this.#onChange);
+      this.container.addEventListener('change', this.onChange);
     }
   }
   get isValid() {
@@ -66,12 +66,12 @@ export default class TextField extends CoreField {
     }
     if (append && container) {
       const divFragment = document.createElement('div');
-      divFragment.innerHTML = this.template(this.#buildData());
+      divFragment.innerHTML = this.template(this.buildData());
 
       container?.appendChild(divFragment.children[0]);
     } else {
       if (container) {
-        container.innerHTML = this.template(this.#buildData());
+        container.innerHTML = this.template(this.buildData());
       }
     }
   }

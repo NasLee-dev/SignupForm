@@ -10,7 +10,7 @@ const DefaultProps: CoreProps = {
   require: false,
 };
 
-export default class CoreField {
+export default abstract class CoreField {
   template;
   container;
   data;
@@ -60,13 +60,5 @@ export default class CoreField {
       }
     }
   }
-  private buildData = () => {
-    const isInvalid = this.validate();
-
-    return {
-      ...this.data,
-      valid: !isInvalid,
-      validateMessage: !!isInvalid ? isInvalid.message : '',
-    }
-  }
+  abstract buildData(): CoreProps;
 }

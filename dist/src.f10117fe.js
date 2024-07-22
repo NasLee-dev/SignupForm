@@ -196,13 +196,6 @@ class CoreField {
         }
       }
     };
-    this.buildData = () => {
-      const isInvalid = this.validate();
-      return Object.assign(Object.assign({}, this.data), {
-        valid: !isInvalid,
-        validateMessage: !!isInvalid ? isInvalid.message : ''
-      });
-    };
     this.template = template;
     this.container = container;
     this.data = Object.assign(Object.assign({}, DefaultProps), data);
@@ -246,18 +239,12 @@ var __classPrivateFieldGet = this && this.__classPrivateFieldGet || function (re
   if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
   return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
 };
-var __classPrivateFieldSet = this && this.__classPrivateFieldSet || function (receiver, state, value, kind, f) {
-  if (kind === "m") throw new TypeError("Private method is not writable");
-  if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a setter");
-  if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot write private member to an object whose class did not declare it");
-  return kind === "a" ? f.call(receiver, value) : f ? f.value = value : state.set(receiver, value), value;
-};
 var __importDefault = this && this.__importDefault || function (mod) {
   return mod && mod.__esModule ? mod : {
     "default": mod
   };
 };
-var _TextField_updated, _TextField_buildData, _TextField_onChange, _TextField_attachEventHandler;
+var _TextField_attachEventHandler;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -268,39 +255,39 @@ const login_text_field_template_1 = __importDefault(require("./login.text-field.
 class TextField extends core_1.default {
   constructor(container, data) {
     super(login_text_field_template_1.default, container, data);
-    _TextField_updated.set(this, false);
-    _TextField_buildData.set(this, () => {
+    this.updated = false;
+    this.buildData = () => {
       const isInvalid = this.validate();
-      if (__classPrivateFieldGet(this, _TextField_updated, "f")) {
+      if (this.updated) {
         return Object.assign(Object.assign({}, this.data), {
-          updated: __classPrivateFieldGet(this, _TextField_updated, "f"),
+          updated: this.updated,
           valid: !isInvalid,
           validateMessage: !!isInvalid ? isInvalid.message : ''
         });
       } else {
         return Object.assign(Object.assign({}, this.data), {
-          updated: __classPrivateFieldGet(this, _TextField_updated, "f"),
+          updated: this.updated,
           valid: true,
           validateMessage: ''
         });
       }
-    });
-    _TextField_onChange.set(this, e => {
+    };
+    this.onChange = e => {
       const {
         value,
         id
       } = e.target;
       if (id === this.data.id) {
-        __classPrivateFieldSet(this, _TextField_updated, true, "f");
+        this.updated = true;
         this.data.text = value;
       }
-    });
+    };
     _TextField_attachEventHandler.set(this, () => {
       var _a;
       if (typeof this.container === 'string') {
-        (_a = document.querySelector(this.container)) === null || _a === void 0 ? void 0 : _a.addEventListener('change', __classPrivateFieldGet(this, _TextField_onChange, "f"));
+        (_a = document.querySelector(this.container)) === null || _a === void 0 ? void 0 : _a.addEventListener('change', this.onChange);
       } else {
-        this.container.addEventListener('change', __classPrivateFieldGet(this, _TextField_onChange, "f"));
+        this.container.addEventListener('change', this.onChange);
       }
     });
     this.render = (append = false) => {
@@ -312,11 +299,11 @@ class TextField extends core_1.default {
       }
       if (append && container) {
         const divFragment = document.createElement('div');
-        divFragment.innerHTML = this.template(__classPrivateFieldGet(this, _TextField_buildData, "f").call(this));
+        divFragment.innerHTML = this.template(this.buildData());
         container === null || container === void 0 ? void 0 : container.appendChild(divFragment.children[0]);
       } else {
         if (container) {
-          container.innerHTML = this.template(__classPrivateFieldGet(this, _TextField_buildData, "f").call(this));
+          container.innerHTML = this.template(this.buildData());
         }
       }
     };
@@ -329,7 +316,7 @@ class TextField extends core_1.default {
     return !this.validate();
   }
 }
-_TextField_updated = new WeakMap(), _TextField_buildData = new WeakMap(), _TextField_onChange = new WeakMap(), _TextField_attachEventHandler = new WeakMap();
+_TextField_attachEventHandler = new WeakMap();
 exports.default = TextField;
 },{"../constant":"src/constant.ts","../utils":"src/utils/index.ts","./core":"src/views/core.ts","./login.text-field.template":"src/views/login.text-field.template.ts"}],"src/page/login.template.ts":[function(require,module,exports) {
 "use strict";
@@ -6064,12 +6051,6 @@ exports.Axios = Axios;
 },{"./lib/axios.js":"node_modules/axios/lib/axios.js"}],"src/page/login.ts":[function(require,module,exports) {
 "use strict";
 
-var __classPrivateFieldSet = this && this.__classPrivateFieldSet || function (receiver, state, value, kind, f) {
-  if (kind === "m") throw new TypeError("Private method is not writable");
-  if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a setter");
-  if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot write private member to an object whose class did not declare it");
-  return kind === "a" ? f.call(receiver, value) : f ? f.value = value : state.set(receiver, value), value;
-};
 var __classPrivateFieldGet = this && this.__classPrivateFieldGet || function (receiver, state, kind, f) {
   if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a getter");
   if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
@@ -6080,7 +6061,7 @@ var __importDefault = this && this.__importDefault || function (mod) {
     "default": mod
   };
 };
-var _Login_template, _Login_data, _Login_container, _Login_loginFail, _Login_fields, _Login_initialize, _Login_onSubmit;
+var _Login_initialize, _Login_onSubmit;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -6089,11 +6070,9 @@ const login_template_1 = __importDefault(require("./login.template"));
 const axios_1 = __importDefault(require("axios"));
 class Login {
   constructor(container, data) {
-    _Login_template.set(this, login_template_1.default);
-    _Login_data.set(this, void 0);
-    _Login_container.set(this, void 0);
-    _Login_loginFail.set(this, false);
-    _Login_fields.set(this, []);
+    this.template = login_template_1.default;
+    this.loginFail = false;
+    this.fields = [];
     _Login_initialize.set(this, () => {
       const idField = new login_text_field_1.default('#login-fields', {
         id: 'userId',
@@ -6109,12 +6088,12 @@ class Login {
         placeholder: '비밀번호를 입력해주세요',
         require: true
       });
-      __classPrivateFieldGet(this, _Login_fields, "f").push(idField);
-      __classPrivateFieldGet(this, _Login_fields, "f").push(passwordField);
+      this.fields.push(idField);
+      this.fields.push(passwordField);
     });
     _Login_onSubmit.set(this, e => {
       e.preventDefault();
-      const loginData = __classPrivateFieldGet(this, _Login_fields, "f").map(field => ({
+      const loginData = this.fields.map(field => ({
         [field.name]: field.value
       })).reduce((a, b) => Object.assign(Object.assign({}, a), b), {});
       axios_1.default.post('/api/authentication', loginData).then(result => {
@@ -6126,40 +6105,40 @@ class Login {
         const options = {
           headers: token
         };
-        __classPrivateFieldGet(this, _Login_data, "f").store.token = token;
+        this.data.store.token = token;
         return axios_1.default.all([axios_1.default.get(`/api/user/${id}`, options), axios_1.default.get(`/api/user/${id}/posts`, options)]);
       }).then(([profile, posts]) => {
-        __classPrivateFieldGet(this, _Login_data, "f").store.userProfile = profile.data.result;
-        __classPrivateFieldGet(this, _Login_data, "f").store.posts = posts.data.result;
+        this.data.store.userProfile = profile.data.result;
+        this.data.store.posts = posts.data.result;
         location.href = '/#/profile';
       }).catch(error => {
-        __classPrivateFieldSet(this, _Login_loginFail, true, "f");
+        this.loginFail = true;
         this.render();
       });
     });
     this.render = () => {
-      __classPrivateFieldGet(this, _Login_container, "f").innerHTML = __classPrivateFieldGet(this, _Login_template, "f").call(this, Object.assign(Object.assign({}, __classPrivateFieldGet(this, _Login_data, "f")), {
-        loginFail: __classPrivateFieldGet(this, _Login_loginFail, "f")
+      this.container.innerHTML = this.template(Object.assign(Object.assign({}, this.data), {
+        loginFail: this.loginFail
       }));
-      __classPrivateFieldGet(this, _Login_fields, "f").forEach(field => {
+      this.fields.forEach(field => {
         field.render(true);
       });
-      __classPrivateFieldGet(this, _Login_container, "f").addEventListener('submit', __classPrivateFieldGet(this, _Login_onSubmit, "f"));
+      this.container.addEventListener('submit', __classPrivateFieldGet(this, _Login_onSubmit, "f"));
     };
     if (typeof container === 'string') {
       const selectedContainer = document.querySelector(container);
       if (!selectedContainer) {
         throw new Error('Container element not found');
       }
-      __classPrivateFieldSet(this, _Login_container, selectedContainer, "f");
+      this.container = selectedContainer;
     } else {
-      __classPrivateFieldSet(this, _Login_container, container, "f");
+      this.container = container;
     }
-    __classPrivateFieldSet(this, _Login_data, data, "f");
+    this.data = data;
     __classPrivateFieldGet(this, _Login_initialize, "f").call(this);
   }
 }
-_Login_template = new WeakMap(), _Login_data = new WeakMap(), _Login_container = new WeakMap(), _Login_loginFail = new WeakMap(), _Login_fields = new WeakMap(), _Login_initialize = new WeakMap(), _Login_onSubmit = new WeakMap();
+_Login_initialize = new WeakMap(), _Login_onSubmit = new WeakMap();
 exports.default = Login;
 },{"../views/login.text-field":"src/views/login.text-field.ts","./login.template":"src/page/login.template.ts","axios":"node_modules/axios/index.js"}],"src/page/signup.template.ts":[function(require,module,exports) {
 "use strict";
@@ -6833,7 +6812,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52506" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "57675" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];
