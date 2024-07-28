@@ -6140,7 +6140,95 @@ class Login {
 }
 _Login_initialize = new WeakMap(), _Login_onSubmit = new WeakMap();
 exports.default = Login;
-},{"../views/login.text-field":"src/views/login.text-field.ts","./login.template":"src/page/login.template.ts","axios":"node_modules/axios/index.js"}],"src/page/signup.template.ts":[function(require,module,exports) {
+},{"../views/login.text-field":"src/views/login.text-field.ts","./login.template":"src/page/login.template.ts","axios":"node_modules/axios/index.js"}],"src/page/profile.template.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+const template = `
+<div class="container mx-auto my-60">
+    <div>
+        <div class="bg-white relative shadow-xl w-5/6 md:w-4/6  lg:w-3/6 xl:w-2/6 mx-auto">
+            <div class="flex justify-center">
+                <img src="{{userProfile.picture.large}}" alt="" class="rounded-full mx-auto absolute -top-20 w-32 h-32 shadow-2xl border-4 border-white">
+            </div>
+            
+            <div class="mt-16">
+                <h1 class="font-bold text-center text-3xl text-gray-900">
+                    {{userProfile.name.first}} {{userProfile.name.last}}
+                </h1>
+                <p class="text-center text-sm text-gray-400 font-medium">Full Stack Developer at Pantazi Software</p>
+                <div class="my-5">
+                    <a href="#" class="text-indigo-200 block text-center font-medium leading-6 px-6 py-3 bg-indigo-600">Connect with <span class="font-bold">{{userProfile.email}}</span></a>
+                </div>
+                <div class="flex justify-evenly my-5">
+                    <a href="#" class="bg font-bold text-sm text-blue-800 w-full text-center py-3 hover:bg-blue-800 hover:text-white hover:shadow-lg">Facebook</a>
+                    <a href="#" class="bg font-bold text-sm text-blue-400 w-full text-center py-3 hover:bg-blue-400 hover:text-white hover:shadow-lg">Twitter</a>
+                    <a href="#" class="bg font-bold text-sm text-yellow-600 w-full text-center py-3 hover:bg-yellow-600 hover:text-white hover:shadow-lg">Instagram</a>
+                    <a href="#" class="bg font-bold text-sm text-gray-600 w-full text-center py-3 hover:bg-gray-600 hover:text-white hover:shadow-lg">Email</a>
+                </div>
+
+                <div class="w-full">
+                    <h3 class="font-bold text-gray-600 text-left px-4">Recent Posts</h3>
+                    <div class="mt-5 w-full">
+                        {{#each posts}}
+                        <a href="#" class="w-full border-t-2 border-gray-100 font-medium text-gray-600 py-4 px-4 w-full block hover:bg-gray-100 transition duration-150">
+                            <img src="https://pantazisoft.com/img/avatar-2.jpeg" alt="" class="rounded-full h-6 shadow-md inline-block mr-2">
+                                {{title}}
+                                <span class="text-gray-400 text-sm">24 min ago</span>
+                        </a>
+                        {{/each}}                        
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+`;
+exports.default = window.Handlebars.compile(template);
+},{}],"src/page/profile.ts":[function(require,module,exports) {
+"use strict";
+
+var __importDefault = this && this.__importDefault || function (mod) {
+  return mod && mod.__esModule ? mod : {
+    "default": mod
+  };
+};
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+const profile_template_1 = __importDefault(require("./profile.template"));
+class Profile {
+  constructor(container, data) {
+    this.template = profile_template_1.default;
+    this.render = () => {
+      this.container.innerHTML = this.template({
+        userProfile: this.data.store.userProfile,
+        posts: this.data.store.userPosts
+      });
+    };
+    if (typeof container === 'string') {
+      const selectedContainer = document.querySelector(container);
+      if (!selectedContainer) {
+        throw new Error('Container element not found');
+      }
+      this.container = selectedContainer;
+    } else {
+      this.container = container;
+    }
+    this.data = data;
+    this.initialize();
+  }
+  initialize() {
+    if (!this.data.store.userProfile) {
+      location.href = '/';
+    }
+  }
+}
+exports.default = Profile;
+},{"./profile.template":"src/page/profile.template.ts"}],"src/page/signup.template.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -6760,6 +6848,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 const login_1 = __importDefault(require("./page/login"));
+const profile_1 = __importDefault(require("./page/profile"));
 const signup_1 = __importDefault(require("./page/signup"));
 const store_1 = __importDefault(require("./store"));
 const store = new store_1.default();
@@ -6775,6 +6864,10 @@ function router() {
       login.render();
       break;
     case '#/profile':
+      const profile = new profile_1.default('#root', {
+        store
+      });
+      profile.render();
       break;
     case '#/post':
       break;
@@ -6787,7 +6880,7 @@ function router() {
 }
 window.addEventListener('hashchange', router);
 document.addEventListener('DOMContentLoaded', router);
-},{"./page/login":"src/page/login.ts","./page/signup":"src/page/signup.ts","./store":"src/store.ts"}],"../../../.nvm/versions/node/v20.8.1/lib/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"./page/login":"src/page/login.ts","./page/profile":"src/page/profile.ts","./page/signup":"src/page/signup.ts","./store":"src/store.ts"}],"../../../.nvm/versions/node/v20.8.1/lib/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -6812,7 +6905,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "53020" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "53349" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];

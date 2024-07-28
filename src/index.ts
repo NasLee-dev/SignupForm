@@ -1,4 +1,5 @@
 import Login from "./page/login";
+import Profile from "./page/profile";
 import Signup from "./page/signup";
 import Store from "./store";
 import { AnyObject } from "./types";
@@ -26,6 +27,10 @@ function router() {
       login.render();
       break;
     case '#/profile':
+      const profile = new Profile('#root', {
+        store,
+      });
+      profile.render();
       break;
     case '#/post':
       break;
