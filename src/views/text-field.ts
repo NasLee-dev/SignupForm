@@ -87,6 +87,7 @@ export default class TextField {
     docFrag.innerHTML = this.template(this.buildData())
     container.innerHTML = docFrag.children[0].innerHTML
   }
+
   public get name(): string {
     return this.data.id
   }
